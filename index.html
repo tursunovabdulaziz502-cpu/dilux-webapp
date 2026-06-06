@@ -1,9 +1,10 @@
-<!DOCTYPE html>
+  <!DOCTYPE html>
 <html lang="uz">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Dilux Bakery & Catering — Namangan</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:wght@300;400;500&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -58,7 +59,6 @@
       cursor: pointer;
       display: flex; align-items: center; gap: 8px;
       transition: background 0.2s, transform 0.15s;
-      position: relative;
     }
     .cart-btn:hover { background: var(--gold-light); transform: scale(1.04); }
     .cart-badge {
@@ -89,7 +89,6 @@
       background: radial-gradient(ellipse at 60% 40%, rgba(201,146,42,0.12) 0%, transparent 60%),
                   radial-gradient(ellipse at 20% 80%, rgba(201,146,42,0.06) 0%, transparent 50%);
     }
-    /* Bokeh dots */
     .hero-bg::after {
       content: '';
       position: absolute; inset: 0;
@@ -191,7 +190,7 @@
     /* ── MENU GRID ── */
     .menu-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
       gap: 28px;
       max-width: 1100px;
       margin: 0 auto;
@@ -209,19 +208,13 @@
       border-color: rgba(201,146,42,0.4);
     }
     .card-img {
-      width: 100%; height: 220px;
+      width: 100%; height: 200px;
       object-fit: cover;
       display: block;
       background: var(--dark4);
-      position: relative;
     }
-
     .card-body { padding: 20px 22px; }
-    .card-title {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.15rem;
-      margin-bottom: 4px;
-    }
+    .card-title { font-family: 'Playfair Display', serif; font-size: 1.15rem; margin-bottom: 4px; }
     .card-desc { font-size: 0.78rem; color: var(--text-muted); margin-bottom: 16px; }
     .card-footer { display: flex; align-items: center; justify-content: space-between; }
     .price { color: var(--gold-light); font-weight: 700; font-size: 1rem; }
@@ -241,9 +234,7 @@
     }
     .add-btn:hover { background: var(--gold); color: var(--dark); }
 
-    .qty-ctrl {
-      display: flex; align-items: center; gap: 10px;
-    }
+    .qty-ctrl { display: flex; align-items: center; gap: 10px; }
     .qty-btn {
       width: 28px; height: 28px;
       border-radius: 50%;
@@ -279,7 +270,7 @@
     .float-bar.hidden { opacity: 0; pointer-events: none; transform: translateX(-50%) translateY(20px); }
     .float-bar:hover { background: var(--gold-light); }
 
-    /* ── FOOTER STRIP ── */
+    /* ── INFO STRIP ── */
     .info-strip {
       background: var(--dark2);
       border-top: 1px solid var(--border);
@@ -312,7 +303,7 @@
     /* ── MODAL BASE ── */
     .overlay {
       position: fixed; inset: 0;
-      background: rgba(0,0,0,0.7);
+      background: rgba(0,0,0,0.75);
       backdrop-filter: blur(4px);
       z-index: 200;
       display: flex; align-items: center; justify-content: center;
@@ -346,13 +337,12 @@
     }
     .close-btn:hover { color: var(--text); }
 
-    /* Cart modal items */
+    /* Cart items */
     .cart-item {
       display: flex; align-items: center; gap: 14px;
       padding: 14px 0;
       border-bottom: 1px solid var(--border);
     }
-    .cart-item-emoji { font-size: 2rem; }
     .cart-item-info { flex: 1; }
     .cart-item-name { font-weight: 600; font-size: 0.9rem; margin-bottom: 3px; }
     .cart-item-price { color: var(--gold-light); font-size: 0.82rem; }
@@ -363,10 +353,8 @@
     }
     .cart-total span:last-child { color: var(--gold-light); font-size: 1.1rem; font-weight: 700; }
 
-    /* Checkout modal */
-    .checkout-tabs {
-      display: flex; gap: 8px; margin-bottom: 24px;
-    }
+    /* Checkout */
+    .checkout-tabs { display: flex; gap: 8px; margin-bottom: 24px; }
     .checkout-tab {
       flex: 1;
       padding: 10px;
@@ -382,9 +370,7 @@
     }
     .checkout-tab.active { background: var(--gold); border-color: var(--gold); color: var(--dark); font-weight: 700; }
 
-    .field {
-      margin-bottom: 14px;
-    }
+    .field { margin-bottom: 14px; }
     .field input, .field textarea {
       width: 100%;
       background: var(--dark4);
@@ -424,10 +410,8 @@
     }
     .confirm-btn:hover { background: var(--gold-light); transform: scale(1.02); }
 
-    /* Success state */
-    .success-msg {
-      text-align: center; padding: 20px 0;
-    }
+    /* Success */
+    .success-msg { text-align: center; padding: 20px 0; }
     .success-icon { font-size: 3rem; margin-bottom: 16px; }
     .success-msg h3 { font-family: 'Playfair Display', serif; font-size: 1.4rem; margin-bottom: 8px; }
     .success-msg p { color: var(--text-muted); font-size: 0.85rem; line-height: 1.6; }
@@ -437,7 +421,8 @@
       nav { padding: 14px 20px; }
       section { padding: 60px 20px; }
       .info-strip { padding: 32px 20px; }
-      .float-bar { min-width: 260px; padding: 14px 24px; gap: 20px; }
+      .float-bar { min-width: 260px; padding: 14px 24px; gap: 20px; font-size: 0.82rem; }
+      .menu-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -470,7 +455,6 @@
 <section id="menu">
   <div class="section-label">MENYU</div>
   <h2 class="section-title">Bugungi tanlovimiz</h2>
-
   <div class="filter-tabs">
     <button class="tab active" onclick="filter(this,'all')">Hammasi</button>
     <button class="tab" onclick="filter(this,'tort')">Tortlar</button>
@@ -478,7 +462,6 @@
     <button class="tab" onclick="filter(this,'non')">Non</button>
     <button class="tab" onclick="filter(this,'keytering')">Keytering</button>
   </div>
-
   <div class="menu-grid" id="menuGrid"></div>
 </section>
 
@@ -488,21 +471,21 @@
     <div class="info-icon">📍</div>
     <div>
       <div class="info-label">MANZIL</div>
-      <div class="info-val">Namangan shahar, Bobur ko'chasi 24</div>
+      <div class="info-val">Namangan shahar</div>
     </div>
   </div>
   <div class="info-item">
     <div class="info-icon">📞</div>
     <div>
       <div class="info-label">TELEFON</div>
-      <div class="info-val">+998 90 123 45 67</div>
+      <div class="info-val">+998 33 221 10 00</div>
     </div>
   </div>
   <div class="info-item">
     <div class="info-icon">🕐</div>
     <div>
       <div class="info-label">ISH VAQTI</div>
-      <div class="info-val">Har kuni 08:00 — 22:00</div>
+      <div class="info-val">Du–Sha: 09:00 — 20:00</div>
     </div>
   </div>
 </div>
@@ -519,7 +502,7 @@
 <div class="overlay" id="cartOverlay">
   <div class="modal">
     <div class="modal-header">
-      <div class="modal-title">Savatcha</div>
+      <div class="modal-title">🛒 Savatcha</div>
       <button class="close-btn" onclick="closeCart()">✕</button>
     </div>
     <div id="cartItems"></div>
@@ -528,7 +511,7 @@
       <span id="cartTotalDisplay">0 so'm</span>
     </div>
     <div style="margin-top:20px">
-      <button class="confirm-btn" onclick="openCheckout()">Buyurtma berish</button>
+      <button class="confirm-btn" onclick="openCheckout()">Buyurtma berish →</button>
     </div>
   </div>
 </div>
@@ -537,24 +520,24 @@
 <div class="overlay" id="checkoutOverlay">
   <div class="modal">
     <div class="modal-header">
-      <div class="modal-title">Buyurtma rasmiylashtirish</div>
+      <div class="modal-title">📋 Buyurtma</div>
       <button class="close-btn" onclick="closeCheckout()">✕</button>
     </div>
     <div class="checkout-tabs">
-      <button class="checkout-tab active" onclick="setDelivery(true,this)">Yetkazib berish</button>
-      <button class="checkout-tab" onclick="setDelivery(false,this)">O'zim olib ketaman</button>
+      <button class="checkout-tab active" onclick="setDelivery(true,this)">🚚 Yetkazib berish</button>
+      <button class="checkout-tab" onclick="setDelivery(false,this)">🏪 O'zim olib ketaman</button>
     </div>
-    <div class="field"><input type="text" id="nameInput" placeholder="Ismingiz"/></div>
-    <div class="field"><input type="tel" id="phoneInput" placeholder="Telefon raqam"/></div>
+    <div class="field"><input type="text" id="nameInput" placeholder="Ismingiz *"/></div>
+    <div class="field"><input type="tel" id="phoneInput" placeholder="Telefon raqam *"/></div>
     <div class="field" id="addressField">
-      <input type="text" id="addressInput" placeholder="Manzil"/>
+      <input type="text" id="addressInput" placeholder="Manzil *"/>
     </div>
     <div class="field"><textarea id="noteInput" placeholder="Izoh (ixtiyoriy)"></textarea></div>
     <div class="checkout-total">
       <span>Jami to'lov</span>
       <span id="checkoutTotal">0 so'm</span>
     </div>
-    <button class="confirm-btn" onclick="placeOrder()">Tasdiqlash</button>
+    <button class="confirm-btn" onclick="placeOrder()">✅ Tasdiqlash</button>
   </div>
 </div>
 
@@ -571,33 +554,38 @@
 </div>
 
 <script>
-  // ── DATA ──
+  // ── Telegram WebApp ──
+  const tg = window.Telegram?.WebApp;
+  if (tg) { tg.ready(); tg.expand(); }
+
+  // ── MAHSULOTLAR ──
   const products = [
-    { id:1, name:"Shokoladli tort", desc:"Belgiya shokoladi, 1 kg", price:180000, img:"https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=600&q=80", cat:"tort" },
-    { id:2, name:"Kekslar to'plami", desc:"Krem va mevalar bilan, 6 dona", price:75000, img:"https://images.unsplash.com/photo-1486427944299-d1955d23e34d?w=600&q=80", cat:"keks" },
-    { id:3, name:"Tiramisu", desc:"Italyan klassikasi, porsiya", price:45000, img:"https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=600&q=80", cat:"keks" },
-    { id:4, name:"Makaronlar", desc:"Frantsuz makaronlari, 12 dona", price:110000, img:"https://images.unsplash.com/photo-1558326567-98ae2405596b?w=600&q=80", cat:"keks" },
-    { id:5, name:"Artizan non", desc:"Tabiiy xamirturushda, 2 dona", price:35000, img:"https://images.unsplash.com/photo-1509440159596-0249088772ff?w=600&q=80", cat:"non" },
-    { id:6, name:"Keytering set", desc:"10 kishilik kanape platter", price:450000, img:"https://images.unsplash.com/photo-1555244162-803834f70033?w=600&q=80", cat:"keytering" },
-    { id:7, name:"Medovik tort", desc:"Asal bilan, 1.2 kg", price:155000, img:"https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?w=600&q=80", cat:"tort" },
-    { id:8, name:"Eklyer", desc:"Shokolad krem bilan, 6 dona", price:65000, img:"https://images.unsplash.com/photo-1612203985729-70726954388c?w=600&q=80", cat:"keks" },
-    { id:9, name:"Briosh", desc:"Sariyog'li frantsuz noni", price:28000, img:"https://images.unsplash.com/photo-1620921592173-4c7a24a19f0b?w=600&q=80", cat:"non" },
+    { id:1,  name:"Shokoladli tort",     desc:"Belgiya shokoladi, 1 kg",           price:180000, img:"https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=600&q=80", cat:"tort",      emoji:"🎂" },
+    { id:2,  name:"Medovik tort",        desc:"Asal bilan, 1.2 kg",                price:155000, img:"https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?w=600&q=80", cat:"tort",      emoji:"🍯" },
+    { id:3,  name:"Kekslar to'plami",    desc:"Krem va mevalar bilan, 6 dona",     price:75000,  img:"https://images.unsplash.com/photo-1486427944299-d1955d23e34d?w=600&q=80", cat:"keks",      emoji:"🧁" },
+    { id:4,  name:"Tiramisu",            desc:"Italyan klassikasi, porsiya",        price:45000,  img:"https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=600&q=80", cat:"keks",      emoji:"🍰" },
+    { id:5,  name:"Makaronlar",          desc:"Frantsuz makaronlari, 12 dona",     price:110000, img:"https://images.unsplash.com/photo-1558326567-98ae2405596b?w=600&q=80", cat:"keks",      emoji:"🌈" },
+    { id:6,  name:"Eklyer",             desc:"Shokolad krem bilan, 6 dona",        price:65000,  img:"https://images.unsplash.com/photo-1612203985729-70726954388c?w=600&q=80", cat:"keks",      emoji:"🍫" },
+    { id:7,  name:"Artizan non",         desc:"Tabiiy xamirturushda, 2 dona",      price:35000,  img:"https://images.unsplash.com/photo-1509440159596-0249088772ff?w=600&q=80", cat:"non",       emoji:"🍞" },
+    { id:8,  name:"Briosh",             desc:"Sariyog'li frantsuz noni",            price:28000,  img:"https://images.unsplash.com/photo-1620921592173-4c7a24a19f0b?w=600&q=80", cat:"non",       emoji:"🥐" },
+    { id:9,  name:"Keytering set",       desc:"10 kishilik kanape platter",         price:450000, img:"https://images.unsplash.com/photo-1555244162-803834f70033?w=600&q=80", cat:"keytering", emoji:"🍱" },
   ];
 
-  let cart = {}; // id -> qty
+  let cart = {};
   let delivery = true;
 
   function fmt(n) { return n.toLocaleString('ru') + " so'm"; }
 
-  // ── RENDER MENU ──
+  // ── MENU RENDER ──
   function renderMenu(catFilter) {
     const grid = document.getElementById('menuGrid');
     const list = catFilter === 'all' ? products : products.filter(p => p.cat === catFilter);
     grid.innerHTML = list.map(p => `
-      <div class="card" data-id="${p.id}">
-        <img class="card-img" src="${p.img}" alt="${p.name}" loading="lazy" onerror="this.style.background='#2A2218';this.alt='🎂'"/>
+      <div class="card">
+        <img class="card-img" src="${p.img}" alt="${p.name}" loading="lazy"
+             onerror="this.style.background='#2A2218';this.src='';this.alt='${p.emoji}'"/>
         <div class="card-body">
-          <div class="card-title">${p.name}</div>
+          <div class="card-title">${p.emoji} ${p.name}</div>
           <div class="card-desc">${p.desc}</div>
           <div class="card-footer">
             <span class="price">${fmt(p.price)}</span>
@@ -620,15 +608,13 @@
 
   function addItem(id) {
     cart[id] = (cart[id] || 0) + 1;
-    refresh(id);
-    updateBar();
+    refresh(id); updateBar();
   }
 
   function changeQty(id, delta) {
     cart[id] = (cart[id] || 0) + delta;
     if (cart[id] <= 0) delete cart[id];
-    refresh(id);
-    updateBar();
+    refresh(id); updateBar();
   }
 
   function refresh(id) {
@@ -637,18 +623,17 @@
   }
 
   function updateBar() {
-    const total = cartTotal();
     const count = cartCount();
-    const bar = document.getElementById('floatBar');
+    const total = cartTotal();
     document.getElementById('floatCount').textContent = `🛒 ${count} mahsulot`;
     document.getElementById('floatTotal').textContent = fmt(total);
     document.getElementById('cartBadge').textContent = count;
-    bar.classList.toggle('hidden', count === 0);
+    document.getElementById('floatBar').classList.toggle('hidden', count === 0);
   }
 
   function cartCount() { return Object.values(cart).reduce((a,b) => a+b, 0); }
   function cartTotal() {
-    return Object.entries(cart).reduce((sum,[id,qty]) => {
+    return Object.entries(cart).reduce((sum, [id, qty]) => {
       const p = products.find(x => x.id == id);
       return sum + (p ? p.price * qty : 0);
     }, 0);
@@ -663,16 +648,16 @@
 
   // ── CART MODAL ──
   function openCart() {
-    const items = Object.entries(cart);
-    if (!items.length) return;
+    if (!cartCount()) return;
     const el = document.getElementById('cartItems');
-    el.innerHTML = items.map(([id, qty]) => {
+    el.innerHTML = Object.entries(cart).map(([id, qty]) => {
       const p = products.find(x => x.id == id);
       return `<div class="cart-item">
-        <img src="${p.img}" alt="${p.name}" style="width:52px;height:52px;object-fit:cover;border-radius:10px;flex-shrink:0"/>
+        <img src="${p.img}" alt="${p.emoji}" style="width:52px;height:52px;object-fit:cover;border-radius:10px;flex-shrink:0"
+             onerror="this.outerHTML='<span style=font-size:2rem>${p.emoji}</span>'"/>
         <div class="cart-item-info">
           <div class="cart-item-name">${p.name}</div>
-          <div class="cart-item-price">${fmt(p.price)}</div>
+          <div class="cart-item-price">${fmt(p.price)} × ${qty} = ${fmt(p.price * qty)}</div>
         </div>
         <div class="qty-ctrl">
           <button class="qty-btn" onclick="changeQtyCart(${id},-1)">−</button>
@@ -688,8 +673,7 @@
   function changeQtyCart(id, delta) {
     cart[id] = (cart[id] || 0) + delta;
     if (cart[id] <= 0) delete cart[id];
-    refresh(id);
-    updateBar();
+    refresh(id); updateBar();
     if (!cartCount()) { closeCart(); return; }
     openCart();
   }
@@ -711,11 +695,47 @@
     document.getElementById('addressField').style.display = val ? 'block' : 'none';
   }
 
+  // ── ZAKAZ YUBORISH → BOT ──
   function placeOrder() {
-    const name = document.getElementById('nameInput').value.trim();
-    const phone = document.getElementById('phoneInput').value.trim();
-    if (!name || !phone) { alert("Ism va telefon raqamni kiriting!"); return; }
-    closeCheckout();
+    const name    = document.getElementById('nameInput').value.trim();
+    const phone   = document.getElementById('phoneInput').value.trim();
+    const address = document.getElementById('addressInput').value.trim();
+    const note    = document.getElementById('noteInput').value.trim();
+
+    if (!name)  { alert("Ismingizni kiriting!"); return; }
+    if (!phone) { alert("Telefon raqam kiriting!"); return; }
+    if (delivery && !address) { alert("Manzilni kiriting!"); return; }
+
+    // Bot uchun zakaz matni
+    const items = Object.entries(cart).map(([id, qty]) => {
+      const p = products.find(x => x.id == id);
+      return `• ${p.emoji} ${p.name} × ${qty} — ${fmt(p.price * qty)}`;
+    }).join('\n');
+
+    const orderText = [
+      `📦 YANGI ZAKAZ (Web App)`,
+      ``,
+      `👤 Ism: ${name}`,
+      `📱 Tel: ${phone}`,
+      `🚚 Usul: ${delivery ? 'Yetkazib berish' : "O'zi olib ketish"}`,
+      address ? `📍 Manzil: ${address}` : '',
+      note    ? `💬 Izoh: ${note}` : '',
+      ``,
+      `🛒 Mahsulotlar:`,
+      items,
+      ``,
+      `💰 Jami: ${fmt(cartTotal())}`,
+    ].filter(Boolean).join('\n');
+
+    // Telegram WebApp orqali botga yuborish
+    if (tg) {
+      tg.sendData(orderText);
+    } else {
+      // Test uchun (brauzerda)
+      console.log("ZAKAZ:\n" + orderText);
+    }
+
+    // Savatni tozalash
     cart = {};
     updateBar();
     renderMenu('all');
@@ -725,14 +745,21 @@
     document.getElementById('phoneInput').value = '';
     document.getElementById('addressInput').value = '';
     document.getElementById('noteInput').value = '';
+
+    closeCheckout();
     document.getElementById('successOverlay').classList.add('open');
+
+    // 3 soniyadan keyin Telegramni yopish
+    setTimeout(() => { if (tg) tg.close(); }, 3000);
   }
 
-  function closeSuccess() { document.getElementById('successOverlay').classList.remove('open'); }
+  function closeSuccess() {
+    document.getElementById('successOverlay').classList.remove('open');
+  }
 
   function scrollToTop() { window.scrollTo({top:0,behavior:'smooth'}); }
 
-  // Close overlays on backdrop click
+  // Backdrop click
   ['cartOverlay','checkoutOverlay','successOverlay'].forEach(id => {
     document.getElementById(id).addEventListener('click', function(e) {
       if (e.target === this) this.classList.remove('open');
