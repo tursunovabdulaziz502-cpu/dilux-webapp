@@ -1,488 +1,89 @@
-  <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="uz">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Dilux Bakery & Catering — Namangan</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:wght@300;400;500&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet"/>
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    :root {
-      --gold: #C9922A;
-      --gold-light: #E8B84B;
-      --gold-pale: #F5D98A;
-      --dark: #0E0C09;
-      --dark2: #161310;
-      --dark3: #1F1A14;
-      --dark4: #2A2218;
-      --text: #E8DDD0;
-      --text-muted: #9A8C7E;
-      --border: rgba(201,146,42,0.2);
-    }
-
-    html { scroll-behavior: smooth; }
-
-    body {
-      font-family: 'Montserrat', sans-serif;
-      background: var(--dark);
-      color: var(--text);
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
-
-    /* ── NAVBAR ── */
-    nav {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 18px 48px;
-      background: rgba(14,12,9,0.85);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border);
-    }
-    .logo { cursor: pointer; }
-    .logo span { display: block; }
-    .logo .brand { font-family: 'Playfair Display', serif; font-size: 1.6rem; color: var(--gold-light); letter-spacing: 2px; }
-    .logo .sub { font-size: 0.6rem; letter-spacing: 4px; color: var(--text-muted); margin-top: -2px; }
-
-    .cart-btn {
-      background: var(--gold);
-      color: var(--dark);
-      border: none;
-      padding: 10px 22px;
-      border-radius: 30px;
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 600;
-      font-size: 0.8rem;
-      letter-spacing: 1px;
-      cursor: pointer;
-      display: flex; align-items: center; gap: 8px;
-      transition: background 0.2s, transform 0.15s;
-    }
-    .cart-btn:hover { background: var(--gold-light); transform: scale(1.04); }
-    .cart-badge {
-      background: var(--dark);
-      color: var(--gold-light);
-      border-radius: 50%;
-      width: 20px; height: 20px;
-      font-size: 0.7rem;
-      display: flex; align-items: center; justify-content: center;
-      font-weight: 700;
-    }
-
-    /* ── HERO ── */
-    .hero {
-      min-height: 100vh;
-      position: relative;
-      display: flex; align-items: center; justify-content: center;
-      text-align: center;
-      overflow: hidden;
-    }
-    .hero-bg {
-      position: absolute; inset: 0;
-      background: linear-gradient(135deg, #1a0e05 0%, #0a0704 40%, #1c1205 100%);
-    }
-    .hero-bg::before {
-      content: '';
-      position: absolute; inset: 0;
-      background: radial-gradient(ellipse at 60% 40%, rgba(201,146,42,0.12) 0%, transparent 60%),
-                  radial-gradient(ellipse at 20% 80%, rgba(201,146,42,0.06) 0%, transparent 50%);
-    }
-    .hero-bg::after {
-      content: '';
-      position: absolute; inset: 0;
-      background-image:
-        radial-gradient(circle, rgba(201,146,42,0.15) 1px, transparent 1px),
-        radial-gradient(circle, rgba(201,146,42,0.08) 1px, transparent 1px);
-      background-size: 80px 80px, 40px 40px;
-      background-position: 0 0, 20px 20px;
-      opacity: 0.4;
-    }
-    .hero-content { position: relative; z-index: 2; max-width: 700px; padding: 0 24px; }
-    .hero-badge {
-      display: inline-block;
-      border: 1px solid var(--gold);
-      color: var(--gold-light);
-      font-size: 0.65rem;
-      letter-spacing: 4px;
-      padding: 6px 18px;
-      border-radius: 20px;
-      margin-bottom: 28px;
-      font-weight: 500;
-    }
-    .hero h1 {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(2.8rem, 6vw, 4.5rem);
-      line-height: 1.1;
-      margin-bottom: 20px;
-    }
-    .hero h1 em { font-style: italic; color: var(--gold-light); }
-    .hero p {
-      font-size: 0.95rem;
-      color: var(--text-muted);
-      line-height: 1.7;
-      margin-bottom: 36px;
-      font-weight: 300;
-    }
-    .hero-btn {
-      background: var(--gold);
-      color: var(--dark);
-      border: none;
-      padding: 15px 40px;
-      border-radius: 30px;
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 600;
-      font-size: 0.85rem;
-      letter-spacing: 1.5px;
-      cursor: pointer;
-      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
-    }
-    .hero-btn:hover {
-      background: var(--gold-light);
-      transform: translateY(-2px);
-      box-shadow: 0 12px 40px rgba(201,146,42,0.35);
-    }
-
-    /* ── SECTION ── */
-    section { padding: 80px 48px; }
-    .section-label {
-      text-align: center;
-      font-size: 0.65rem;
-      letter-spacing: 5px;
-      color: var(--gold);
-      font-weight: 600;
-      margin-bottom: 12px;
-    }
-    .section-title {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(1.8rem, 3vw, 2.6rem);
-      text-align: center;
-      margin-bottom: 40px;
-    }
-
-    /* ── FILTER TABS ── */
-    .filter-tabs {
-      display: flex; justify-content: center; gap: 10px;
-      flex-wrap: wrap;
-      margin-bottom: 48px;
-    }
-    .tab {
-      border: 1px solid var(--border);
-      background: transparent;
-      color: var(--text-muted);
-      padding: 9px 22px;
-      border-radius: 30px;
-      font-family: 'Montserrat', sans-serif;
-      font-size: 0.8rem;
-      cursor: pointer;
-      transition: all 0.2s;
-      font-weight: 500;
-    }
-    .tab:hover { border-color: var(--gold); color: var(--gold-light); }
-    .tab.active {
-      background: var(--gold);
-      border-color: var(--gold);
-      color: var(--dark);
-      font-weight: 700;
-    }
-
-    /* ── MENU GRID ── */
-    .menu-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 28px;
-      max-width: 1100px;
-      margin: 0 auto;
-    }
-    .card {
-      background: var(--dark3);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      overflow: hidden;
-      transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
-    }
-    .card:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-      border-color: rgba(201,146,42,0.4);
-    }
-    .card-img {
-      width: 100%; height: 200px;
-      object-fit: cover;
-      display: block;
-      background: var(--dark4);
-    }
-    .card-body { padding: 20px 22px; }
-    .card-title { font-family: 'Playfair Display', serif; font-size: 1.15rem; margin-bottom: 4px; }
-    .card-desc { font-size: 0.78rem; color: var(--text-muted); margin-bottom: 16px; }
-    .card-footer { display: flex; align-items: center; justify-content: space-between; }
-    .price { color: var(--gold-light); font-weight: 700; font-size: 1rem; }
-
-    .add-btn {
-      background: transparent;
-      border: 1px solid var(--gold);
-      color: var(--gold-light);
-      padding: 8px 18px;
-      border-radius: 25px;
-      font-family: 'Montserrat', sans-serif;
-      font-size: 0.78rem;
-      font-weight: 600;
-      cursor: pointer;
-      display: flex; align-items: center; gap: 6px;
-      transition: all 0.2s;
-    }
-    .add-btn:hover { background: var(--gold); color: var(--dark); }
-
-    .qty-ctrl { display: flex; align-items: center; gap: 10px; }
-    .qty-btn {
-      width: 28px; height: 28px;
-      border-radius: 50%;
-      border: 1px solid var(--gold);
-      background: transparent;
-      color: var(--gold-light);
-      font-size: 1rem;
-      cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      transition: all 0.15s;
-    }
-    .qty-btn:hover { background: var(--gold); color: var(--dark); }
-    .qty-num { font-weight: 700; font-size: 0.9rem; min-width: 20px; text-align: center; }
-
-    /* ── FLOATING CART BAR ── */
-    .float-bar {
-      position: fixed;
-      bottom: 24px; left: 50%; transform: translateX(-50%);
-      background: var(--gold);
-      color: var(--dark);
-      padding: 16px 32px;
-      border-radius: 40px;
-      display: flex; align-items: center; justify-content: space-between;
-      gap: 40px;
-      font-weight: 700;
-      font-size: 0.9rem;
-      cursor: pointer;
-      box-shadow: 0 12px 40px rgba(201,146,42,0.4);
-      transition: opacity 0.3s, transform 0.3s;
-      z-index: 90;
-      min-width: 300px;
-    }
-    .float-bar.hidden { opacity: 0; pointer-events: none; transform: translateX(-50%) translateY(20px); }
-    .float-bar:hover { background: var(--gold-light); }
-
-    /* ── INFO STRIP ── */
-    .info-strip {
-      background: var(--dark2);
-      border-top: 1px solid var(--border);
-      padding: 48px;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 32px;
-    }
-    .info-item { display: flex; align-items: flex-start; gap: 16px; }
-    .info-icon {
-      width: 44px; height: 44px;
-      border: 1px solid var(--border);
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.2rem;
-      flex-shrink: 0;
-      color: var(--gold-light);
-    }
-    .info-label { font-size: 0.6rem; letter-spacing: 3px; color: var(--gold); font-weight: 600; margin-bottom: 4px; }
-    .info-val { font-size: 0.9rem; font-weight: 500; }
-
-    footer {
-      text-align: center;
-      padding: 24px;
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      border-top: 1px solid var(--border);
-    }
-
-    /* ── MODAL BASE ── */
-    .overlay {
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,0.75);
-      backdrop-filter: blur(4px);
-      z-index: 200;
-      display: flex; align-items: center; justify-content: center;
-      opacity: 0; pointer-events: none;
-      transition: opacity 0.25s;
-    }
-    .overlay.open { opacity: 1; pointer-events: all; }
-    .modal {
-      background: var(--dark3);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 32px;
-      width: 90%; max-width: 480px;
-      max-height: 90vh;
-      overflow-y: auto;
-      transform: translateY(20px);
-      transition: transform 0.25s;
-    }
-    .overlay.open .modal { transform: translateY(0); }
-    .modal-header {
-      display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 24px;
-    }
-    .modal-title { font-family: 'Playfair Display', serif; font-size: 1.4rem; }
-    .close-btn {
-      background: transparent; border: none;
-      color: var(--text-muted); font-size: 1.4rem;
-      cursor: pointer; transition: color 0.15s;
-      width: 32px; height: 32px;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .close-btn:hover { color: var(--text); }
-
-    /* Cart items */
-    .cart-item {
-      display: flex; align-items: center; gap: 14px;
-      padding: 14px 0;
-      border-bottom: 1px solid var(--border);
-    }
-    .cart-item-info { flex: 1; }
-    .cart-item-name { font-weight: 600; font-size: 0.9rem; margin-bottom: 3px; }
-    .cart-item-price { color: var(--gold-light); font-size: 0.82rem; }
-    .cart-total {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 18px 0 0;
-      font-size: 1rem; font-weight: 600;
-    }
-    .cart-total span:last-child { color: var(--gold-light); font-size: 1.1rem; font-weight: 700; }
-
-    /* Checkout */
-    .checkout-tabs { display: flex; gap: 8px; margin-bottom: 24px; }
-    .checkout-tab {
-      flex: 1;
-      padding: 10px;
-      border-radius: 10px;
-      border: 1px solid var(--border);
-      background: transparent;
-      color: var(--text-muted);
-      font-family: 'Montserrat', sans-serif;
-      font-size: 0.82rem;
-      cursor: pointer;
-      font-weight: 500;
-      transition: all 0.2s;
-    }
-    .checkout-tab.active { background: var(--gold); border-color: var(--gold); color: var(--dark); font-weight: 700; }
-
-    .field { margin-bottom: 14px; }
-    .field input, .field textarea {
-      width: 100%;
-      background: var(--dark4);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 12px 16px;
-      color: var(--text);
-      font-family: 'Montserrat', sans-serif;
-      font-size: 0.85rem;
-      outline: none;
-      transition: border-color 0.2s;
-    }
-    .field input:focus, .field textarea:focus { border-color: var(--gold); }
-    .field input::placeholder, .field textarea::placeholder { color: var(--text-muted); }
-    .field textarea { min-height: 80px; resize: vertical; }
-
-    .checkout-total {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 16px 0 20px;
-      font-size: 0.95rem; font-weight: 600;
-    }
-    .checkout-total span:last-child { color: var(--gold-light); font-size: 1.15rem; font-weight: 700; }
-
-    .confirm-btn {
-      width: 100%;
-      background: var(--gold);
-      color: var(--dark);
-      border: none;
-      padding: 15px;
-      border-radius: 30px;
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 700;
-      font-size: 0.9rem;
-      letter-spacing: 1px;
-      cursor: pointer;
-      transition: background 0.2s, transform 0.15s;
-    }
-    .confirm-btn:hover { background: var(--gold-light); transform: scale(1.02); }
-
-    /* Success */
-    .success-msg { text-align: center; padding: 20px 0; }
-    .success-icon { font-size: 3rem; margin-bottom: 16px; }
-    .success-msg h3 { font-family: 'Playfair Display', serif; font-size: 1.4rem; margin-bottom: 8px; }
-    .success-msg p { color: var(--text-muted); font-size: 0.85rem; line-height: 1.6; }
-
-    /* Responsive */
-    @media (max-width: 600px) {
-      nav { padding: 14px 20px; }
-      section { padding: 60px 20px; }
-      .info-strip { padding: 32px 20px; }
-      .float-bar { min-width: 260px; padding: 14px 24px; gap: 20px; font-size: 0.82rem; }
-      .menu-grid { grid-template-columns: 1fr; }
-    }
-  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400;1,600&family=DM+Sans:wght@300;400;500;600&family=Italiana&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
 
 <!-- NAV -->
-<nav>
+<nav id="navbar">
   <div class="logo" onclick="scrollToTop()">
     <span class="brand">Dilux</span>
     <span class="sub">BAKERY &amp; CATERING</span>
   </div>
   <button class="cart-btn" onclick="openCart()">
-    🛒 Savatcha
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+    Savatcha
     <span class="cart-badge" id="cartBadge">0</span>
   </button>
 </nav>
 
 <!-- HERO -->
-<div class="hero" id="top">
-  <div class="hero-bg"></div>
-  <div class="hero-content">
-    <div class="hero-badge">EST. 2020 · NAMANGAN</div>
-    <h1>Har bir tilim — <em>sanat</em></h1>
-    <p>Eng sara tortlar, premium kekslar va keytering xizmati.<br>Tabiiy mahsulotlar, ustaning qo'li bilan.</p>
-    <button class="hero-btn" onclick="document.getElementById('menu').scrollIntoView({behavior:'smooth'})">Menyuni ko'rish</button>
+<header class="hero" id="top">
+  <div class="hero-bg">
+    <div class="hero-grain"></div>
   </div>
-</div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">
+      <span class="eyebrow-line"></span>
+      EST. 2020 · NAMANGAN
+      <span class="eyebrow-line"></span>
+    </div>
+    <h1 class="hero-title">Har bir tilim —<br><em>hayot zavqi</em></h1>
+    <p class="hero-desc">Premium tortlar, kekslar va keytering xizmati.<br>Tabiiy mahsulotlar — usta qo'lida.</p>
+    <button class="hero-btn" onclick="document.getElementById('menu').scrollIntoView({behavior:'smooth'})">
+      Menyuni ko'rish
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+    </button>
+  </div>
+  <div class="hero-scroll-hint">↓</div>
+</header>
 
 <!-- MENU -->
 <section id="menu">
-  <div class="section-label">MENYU</div>
+  <div class="section-eyebrow">MENYU</div>
   <h2 class="section-title">Bugungi tanlovimiz</h2>
-  <div class="filter-tabs">
+
+  <div class="filter-tabs" id="filterTabs">
     <button class="tab active" onclick="filter(this,'all')">Hammasi</button>
     <button class="tab" onclick="filter(this,'tort')">Tortlar</button>
     <button class="tab" onclick="filter(this,'keks')">Kekslar</button>
     <button class="tab" onclick="filter(this,'non')">Non</button>
     <button class="tab" onclick="filter(this,'keytering')">Keytering</button>
   </div>
+
   <div class="menu-grid" id="menuGrid"></div>
 </section>
 
 <!-- INFO STRIP -->
 <div class="info-strip">
   <div class="info-item">
-    <div class="info-icon">📍</div>
+    <div class="info-icon">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+    </div>
     <div>
       <div class="info-label">MANZIL</div>
       <div class="info-val">Namangan shahar</div>
     </div>
   </div>
   <div class="info-item">
-    <div class="info-icon">📞</div>
+    <div class="info-icon">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 11.5a19.79 19.79 0 01-3.07-8.67A2 2 0 012 .84h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 8.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+    </div>
     <div>
       <div class="info-label">TELEFON</div>
       <div class="info-val">+998 33 221 10 00</div>
     </div>
   </div>
   <div class="info-item">
-    <div class="info-icon">🕐</div>
+    <div class="info-icon">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+    </div>
     <div>
       <div class="info-label">ISH VAQTI</div>
       <div class="info-val">Du–Sha: 09:00 — 20:00</div>
@@ -502,15 +103,17 @@
 <div class="overlay" id="cartOverlay">
   <div class="modal">
     <div class="modal-header">
-      <div class="modal-title">🛒 Savatcha</div>
-      <button class="close-btn" onclick="closeCart()">✕</button>
+      <div class="modal-title">Savatcha</div>
+      <button class="close-btn" onclick="closeCart()" aria-label="Yopish">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
     </div>
     <div id="cartItems"></div>
     <div class="cart-total">
       <span>Jami</span>
       <span id="cartTotalDisplay">0 so'm</span>
     </div>
-    <div style="margin-top:20px">
+    <div class="modal-action">
       <button class="confirm-btn" onclick="openCheckout()">Buyurtma berish →</button>
     </div>
   </div>
@@ -520,8 +123,10 @@
 <div class="overlay" id="checkoutOverlay">
   <div class="modal">
     <div class="modal-header">
-      <div class="modal-title">📋 Buyurtma</div>
-      <button class="close-btn" onclick="closeCheckout()">✕</button>
+      <div class="modal-title">Buyurtma</div>
+      <button class="close-btn" onclick="closeCheckout()" aria-label="Yopish">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
     </div>
     <div class="checkout-tabs">
       <button class="checkout-tab active" onclick="setDelivery(true,this)">🚚 Yetkazib berish</button>
@@ -543,231 +148,16 @@
 
 <!-- SUCCESS MODAL -->
 <div class="overlay" id="successOverlay">
-  <div class="modal" style="text-align:center">
+  <div class="modal">
     <div class="success-msg">
-      <div class="success-icon">🎉</div>
+      <div class="success-icon">✦</div>
       <h3>Buyurtma qabul qilindi!</h3>
       <p>Tez orada siz bilan bog'lanamiz.<br>Rahmat, sizning tanlovingiz uchun!</p>
-      <button class="confirm-btn" style="margin-top:24px" onclick="closeSuccess()">Yaxshi</button>
+      <button class="confirm-btn confirm-btn--success" onclick="closeSuccess()">Yaxshi</button>
     </div>
   </div>
 </div>
 
-<script>
-  // ── Telegram WebApp ──
-  const tg = window.Telegram?.WebApp;
-  if (tg) { tg.ready(); tg.expand(); }
-
-  // ── MAHSULOTLAR ──
-  const products = [
-    { id:1,  name:"Shokoladli tort",     desc:"Belgiya shokoladi, 1 kg",           price:180000, img:"https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=600&q=80", cat:"tort",      emoji:"🎂" },
-    { id:2,  name:"Medovik tort",        desc:"Asal bilan, 1.2 kg",                price:155000, img:"https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?w=600&q=80", cat:"tort",      emoji:"🍯" },
-    { id:3,  name:"Kekslar to'plami",    desc:"Krem va mevalar bilan, 6 dona",     price:75000,  img:"https://images.unsplash.com/photo-1486427944299-d1955d23e34d?w=600&q=80", cat:"keks",      emoji:"🧁" },
-    { id:4,  name:"Tiramisu",            desc:"Italyan klassikasi, porsiya",        price:45000,  img:"https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=600&q=80", cat:"keks",      emoji:"🍰" },
-    { id:5,  name:"Makaronlar",          desc:"Frantsuz makaronlari, 12 dona",     price:110000, img:"https://images.unsplash.com/photo-1558326567-98ae2405596b?w=600&q=80", cat:"keks",      emoji:"🌈" },
-    { id:6,  name:"Eklyer",             desc:"Shokolad krem bilan, 6 dona",        price:65000,  img:"https://images.unsplash.com/photo-1612203985729-70726954388c?w=600&q=80", cat:"keks",      emoji:"🍫" },
-    { id:7,  name:"Artizan non",         desc:"Tabiiy xamirturushda, 2 dona",      price:35000,  img:"https://images.unsplash.com/photo-1509440159596-0249088772ff?w=600&q=80", cat:"non",       emoji:"🍞" },
-    { id:8,  name:"Briosh",             desc:"Sariyog'li frantsuz noni",            price:28000,  img:"https://images.unsplash.com/photo-1620921592173-4c7a24a19f0b?w=600&q=80", cat:"non",       emoji:"🥐" },
-    { id:9,  name:"Keytering set",       desc:"10 kishilik kanape platter",         price:450000, img:"https://images.unsplash.com/photo-1555244162-803834f70033?w=600&q=80", cat:"keytering", emoji:"🍱" },
-  ];
-
-  let cart = {};
-  let delivery = true;
-
-  function fmt(n) { return n.toLocaleString('ru') + " so'm"; }
-
-  // ── MENU RENDER ──
-  function renderMenu(catFilter) {
-    const grid = document.getElementById('menuGrid');
-    const list = catFilter === 'all' ? products : products.filter(p => p.cat === catFilter);
-    grid.innerHTML = list.map(p => `
-      <div class="card">
-        <img class="card-img" src="${p.img}" alt="${p.name}" loading="lazy"
-             onerror="this.style.background='#2A2218';this.src='';this.alt='${p.emoji}'"/>
-        <div class="card-body">
-          <div class="card-title">${p.emoji} ${p.name}</div>
-          <div class="card-desc">${p.desc}</div>
-          <div class="card-footer">
-            <span class="price">${fmt(p.price)}</span>
-            <div id="ctrl-${p.id}">${ctrlHtml(p.id)}</div>
-          </div>
-        </div>
-      </div>
-    `).join('');
-  }
-
-  function ctrlHtml(id) {
-    const qty = cart[id] || 0;
-    if (!qty) return `<button class="add-btn" onclick="addItem(${id})">+ Qo'shish</button>`;
-    return `<div class="qty-ctrl">
-      <button class="qty-btn" onclick="changeQty(${id},-1)">−</button>
-      <span class="qty-num">${qty}</span>
-      <button class="qty-btn" onclick="changeQty(${id},1)">+</button>
-    </div>`;
-  }
-
-  function addItem(id) {
-    cart[id] = (cart[id] || 0) + 1;
-    refresh(id); updateBar();
-  }
-
-  function changeQty(id, delta) {
-    cart[id] = (cart[id] || 0) + delta;
-    if (cart[id] <= 0) delete cart[id];
-    refresh(id); updateBar();
-  }
-
-  function refresh(id) {
-    const el = document.getElementById('ctrl-' + id);
-    if (el) el.innerHTML = ctrlHtml(id);
-  }
-
-  function updateBar() {
-    const count = cartCount();
-    const total = cartTotal();
-    document.getElementById('floatCount').textContent = `🛒 ${count} mahsulot`;
-    document.getElementById('floatTotal').textContent = fmt(total);
-    document.getElementById('cartBadge').textContent = count;
-    document.getElementById('floatBar').classList.toggle('hidden', count === 0);
-  }
-
-  function cartCount() { return Object.values(cart).reduce((a,b) => a+b, 0); }
-  function cartTotal() {
-    return Object.entries(cart).reduce((sum, [id, qty]) => {
-      const p = products.find(x => x.id == id);
-      return sum + (p ? p.price * qty : 0);
-    }, 0);
-  }
-
-  // ── FILTER ──
-  function filter(btn, cat) {
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    btn.classList.add('active');
-    renderMenu(cat);
-  }
-
-  // ── CART MODAL ──
-  function openCart() {
-    if (!cartCount()) return;
-    const el = document.getElementById('cartItems');
-    el.innerHTML = Object.entries(cart).map(([id, qty]) => {
-      const p = products.find(x => x.id == id);
-      return `<div class="cart-item">
-        <img src="${p.img}" alt="${p.emoji}" style="width:52px;height:52px;object-fit:cover;border-radius:10px;flex-shrink:0"
-             onerror="this.outerHTML='<span style=font-size:2rem>${p.emoji}</span>'"/>
-        <div class="cart-item-info">
-          <div class="cart-item-name">${p.name}</div>
-          <div class="cart-item-price">${fmt(p.price)} × ${qty} = ${fmt(p.price * qty)}</div>
-        </div>
-        <div class="qty-ctrl">
-          <button class="qty-btn" onclick="changeQtyCart(${id},-1)">−</button>
-          <span class="qty-num">${qty}</span>
-          <button class="qty-btn" onclick="changeQtyCart(${id},1)">+</button>
-        </div>
-      </div>`;
-    }).join('');
-    document.getElementById('cartTotalDisplay').textContent = fmt(cartTotal());
-    document.getElementById('cartOverlay').classList.add('open');
-  }
-
-  function changeQtyCart(id, delta) {
-    cart[id] = (cart[id] || 0) + delta;
-    if (cart[id] <= 0) delete cart[id];
-    refresh(id); updateBar();
-    if (!cartCount()) { closeCart(); return; }
-    openCart();
-  }
-
-  function closeCart() { document.getElementById('cartOverlay').classList.remove('open'); }
-
-  // ── CHECKOUT ──
-  function openCheckout() {
-    closeCart();
-    document.getElementById('checkoutTotal').textContent = fmt(cartTotal());
-    document.getElementById('checkoutOverlay').classList.add('open');
-  }
-  function closeCheckout() { document.getElementById('checkoutOverlay').classList.remove('open'); }
-
-  function setDelivery(val, btn) {
-    delivery = val;
-    document.querySelectorAll('.checkout-tab').forEach(t => t.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById('addressField').style.display = val ? 'block' : 'none';
-  }
-
-  // ── ZAKAZ YUBORISH → BOT ──
-  function placeOrder() {
-    const name    = document.getElementById('nameInput').value.trim();
-    const phone   = document.getElementById('phoneInput').value.trim();
-    const address = document.getElementById('addressInput').value.trim();
-    const note    = document.getElementById('noteInput').value.trim();
-
-    if (!name)  { alert("Ismingizni kiriting!"); return; }
-    if (!phone) { alert("Telefon raqam kiriting!"); return; }
-    if (delivery && !address) { alert("Manzilni kiriting!"); return; }
-
-    // Bot uchun zakaz matni
-    const items = Object.entries(cart).map(([id, qty]) => {
-      const p = products.find(x => x.id == id);
-      return `• ${p.emoji} ${p.name} × ${qty} — ${fmt(p.price * qty)}`;
-    }).join('\n');
-
-    const orderText = [
-      `📦 YANGI ZAKAZ (Web App)`,
-      ``,
-      `👤 Ism: ${name}`,
-      `📱 Tel: ${phone}`,
-      `🚚 Usul: ${delivery ? 'Yetkazib berish' : "O'zi olib ketish"}`,
-      address ? `📍 Manzil: ${address}` : '',
-      note    ? `💬 Izoh: ${note}` : '',
-      ``,
-      `🛒 Mahsulotlar:`,
-      items,
-      ``,
-      `💰 Jami: ${fmt(cartTotal())}`,
-    ].filter(Boolean).join('\n');
-
-    // Telegram WebApp orqali botga yuborish
-    if (tg) {
-      tg.sendData(orderText);
-    } else {
-      // Test uchun (brauzerda)
-      console.log("ZAKAZ:\n" + orderText);
-    }
-
-    // Savatni tozalash
-    cart = {};
-    updateBar();
-    renderMenu('all');
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    document.querySelector('.tab').classList.add('active');
-    document.getElementById('nameInput').value = '';
-    document.getElementById('phoneInput').value = '';
-    document.getElementById('addressInput').value = '';
-    document.getElementById('noteInput').value = '';
-
-    closeCheckout();
-    document.getElementById('successOverlay').classList.add('open');
-
-    // 3 soniyadan keyin Telegramni yopish
-    setTimeout(() => { if (tg) tg.close(); }, 3000);
-  }
-
-  function closeSuccess() {
-    document.getElementById('successOverlay').classList.remove('open');
-  }
-
-  function scrollToTop() { window.scrollTo({top:0,behavior:'smooth'}); }
-
-  // Backdrop click
-  ['cartOverlay','checkoutOverlay','successOverlay'].forEach(id => {
-    document.getElementById(id).addEventListener('click', function(e) {
-      if (e.target === this) this.classList.remove('open');
-    });
-  });
-
-  // Init
-  renderMenu('all');
-</script>
+<script src="script.js"></script>
 </body>
 </html>
