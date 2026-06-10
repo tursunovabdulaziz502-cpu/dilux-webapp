@@ -192,145 +192,9 @@ function setDelivery(val, btn) {
   delivery = val;
   document.querySelectorAll('.checkout-tab').forEach(t => t.classList.remove('active'));
   btn.classList.add('active');
-  const mapRow = document.getElementById('mapRow');
-  if (mapRow) mapRow.classList.toggle('hidden-field', !val);
 }
 
-// ── XARiTA ──
-let map = null;
-let marker = null;
-let selectedLatLng = null;
 
-function openMap() {
-  document.getElementById('mapOverlay').classList.add('open');
-
-  setTimeout(() => {
-    if (!map) {
-      // Namangan markazi
-      map = L.map('map').setView([41.0011, 71.6722], 14);
-      L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
-        attribution: '© Esri, HERE, Garmin, USGS',
-        maxZoom: 20,
-      }).addTo(map);
-
-      // Custom pin icon
-      const pinIcon = L.divIcon({
-        className: '',
-        html: `<div class="map-pin">
-          <svg width="32" height="42" viewBox="0 0 32 42" fill="none">
-            <path d="M16 0C7.16 0 0 7.16 0 16c0 11 16 26 16 26S32 27 32 16C32 7.16 24.84 0 16 0z" fill="#c8a96e"/>
-            <circle cx="16" cy="16" r="7" fill="white"/>
-          </svg>
-        </div>`,
-        iconSize: [32, 42],
-        iconAnchor: [16, 42],
-      });
-
-      map.on('click', (e) => setPin(e.latlng, pinIcon));
-
-      // Agar avval tanlangan bo'lsa
-      if (selectedLatLng) {
-        setPin(selectedLatLng, pinIcon);
-        map.setView(selectedLatLng, 16);
-      }
-    }
-    map.invalidateSize();
-  }, 100);
-}
-
-function setPin(latlng, icon) {
-  if (!icon) {
-    icon = L.divIcon({
-      className: '',
-      html: `<div class="map-pin"><svg width="32" height="42" viewBox="0 0 32 42" fill="none"><path d="M16 0C7.16 0 0 7.16 0 16c0 11 16 26 16 26S32 27 32 16C32 7.16 24.84 0 16 0z" fill="#c8a96e"/><circle cx="16" cy="16" r="7" fill="white"/></svg></div>`,
-      iconSize: [32, 42],
-      iconAnchor: [16, 42],
-    });
-  }
-  if (marker) marker.remove();
-  marker = L.marker(latlng, { icon, draggable: true }).addTo(map);
-  selectedLatLng = latlng;
-  updateMapAddress(latlng);
-
-  marker.on('dragend', (e) => {
-    selectedLatLng = e.target.getLatLng();
-    updateMapAddress(selectedLatLng);
-  });
-}
-
-function updateMapAddress(latlng) {
-  const lat = latlng.lat.toFixed(5);
-  const lng = latlng.lng.toFixed(5);
-  document.getElementById('mapAddress').textContent = '⏳ Manzil aniqlanmoqda...';
-
-  fetch(`https://nominatim.openstreetmap.org/reverse?lat=${latlng.lat}&lon=${latlng.lng}&format=json&addressdetails=1&accept-language=uz,ru`)
-    .then(r => r.json())
-    .then(data => {
-      const a = data.address || {};
-      const road    = a.road || a.pedestrian || a.footway || a.path || '';
-      const house   = a.house_number || '';
-      const quarter = a.quarter || a.neighbourhood || a.suburb || '';
-      const city    = a.city || a.town || a.village || a.county || '';
-
-      let parts = [];
-      if (road)    parts.push(road + (house ? ', ' + house : ''));
-      if (quarter) parts.push(quarter);
-      if (city)    parts.push(city);
-
-      const niceAddr = parts.length ? parts.join(', ') : (data.display_name || `${lat}, ${lng}`);
-      document.getElementById('mapAddress').textContent = niceAddr;
-      document.getElementById('mapAddress').style.color = '';
-      selectedLatLng._address = niceAddr;
-      selectedLatLng._fullAddress = data.display_name || niceAddr;
-    })
-    .catch(() => {
-      document.getElementById('mapAddress').textContent = `${lat}, ${lng}`;
-      selectedLatLng._address = `${lat}, ${lng}`;
-    });
-}
-
-function locateMe() {
-  if (!navigator.geolocation) {
-    alert("Geolokatsiya qo'llab-quvvatlanmaydi");
-    return;
-  }
-  const btn = document.querySelector('.map-locate-btn');
-  btn.textContent = 'Aniqlanmoqda...';
-  btn.disabled = true;
-
-  navigator.geolocation.getCurrentPosition(
-    (pos) => {
-      const latlng = L.latLng(pos.coords.latitude, pos.coords.longitude);
-      map.setView(latlng, 17);
-      setPin(latlng);
-      btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg> Joylashuvimni aniqlash`;
-      btn.disabled = false;
-    },
-    () => {
-      alert("Joylashuvni aniqlab bo'lmadi. Xaritadan tanlang.");
-      btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg> Joylashuvimni aniqlash`;
-      btn.disabled = false;
-    }
-  );
-}
-
-function confirmLocation() {
-  if (!selectedLatLng) {
-    document.getElementById('mapAddress').style.color = '#e74c3c';
-    document.getElementById('mapAddress').textContent = '⚠️ Iltimos, xaritadan joy tanlang!';
-    return;
-  }
-  closeMap();
-  // Checkout da manzilni ko'rsatish
-  const addr = selectedLatLng._address ||
-    `${selectedLatLng.lat.toFixed(5)}, ${selectedLatLng.lng.toFixed(5)}`;
-  document.getElementById('mapAddressDisplay').textContent = addr;
-  document.getElementById('mapAddressRow').classList.remove('hidden-field');
-}
-
-function closeMap() {
-  document.getElementById('mapOverlay').classList.remove('open');
-}
 
 // ── ORDER → BOT ──
 function placeOrder() {
@@ -341,26 +205,10 @@ function placeOrder() {
   if (!name)  { shakeField('nameInput');  return; }
   if (!phone) { shakeField('phoneInput'); return; }
 
-  if (delivery && !selectedLatLng) {
-    document.getElementById('mapAddressRow').classList.remove('hidden-field');
-    document.getElementById('mapAddressDisplay').textContent = '⚠️ Xaritadan manzil tanlang!';
-    document.getElementById('mapAddressDisplay').style.color = '#e74c3c';
-    openMap();
-    return;
-  }
-
   const items = Object.entries(cart).map(([id, qty]) => {
     const p = products.find(x => x.id == id);
     return `• ${p.name} × ${qty} — ${fmt(p.price * qty)}`;
   }).join('\n');
-
-  let locationLine = '';
-  if (delivery && selectedLatLng) {
-    const addr = selectedLatLng._address ||
-      `${selectedLatLng.lat.toFixed(5)}, ${selectedLatLng.lng.toFixed(5)}`;
-    const coords = `${selectedLatLng.lat.toFixed(6)},${selectedLatLng.lng.toFixed(6)}`;
-    locationLine = `📍 Manzil: ${addr}\n🗺 https://maps.google.com/maps?q=${coords}`;
-  }
 
   const orderText = [
     `📦 YANGI ZAKAZ`,
@@ -368,7 +216,6 @@ function placeOrder() {
     `👤 Ism: ${name}`,
     `📱 Tel: ${phone}`,
     `🚚 Usul: ${delivery ? 'Yetkazib berish' : "O'zi olib ketish"}`,
-    locationLine || '',
     note ? `💬 Izoh: ${note}` : '',
     ``,
     `🛒 Mahsulotlar:`,
@@ -385,15 +232,12 @@ function placeOrder() {
 
   // Reset
   cart = {};
-  selectedLatLng = null;
   updateBar();
   renderMenu(currentFilter);
 
   ['nameInput','phoneInput','noteInput'].forEach(id => {
     document.getElementById(id).value = '';
   });
-  const mapRow = document.getElementById('mapAddressRow');
-  if (mapRow) mapRow.classList.add('hidden-field');
 
   closeCheckout();
   document.getElementById('successOverlay').classList.add('open');
@@ -417,7 +261,7 @@ function scrollToTop() {
 }
 
 // ── BACKDROP CLICK ──
-['cartOverlay', 'checkoutOverlay', 'successOverlay', 'mapOverlay'].forEach(id => {
+['cartOverlay', 'checkoutOverlay', 'successOverlay'].forEach(id => {
   document.getElementById(id).addEventListener('click', function(e) {
     if (e.target === this) this.classList.remove('open');
   });
