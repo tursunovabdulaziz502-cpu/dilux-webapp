@@ -199,12 +199,10 @@ function setDelivery(val, btn) {
 function placeOrder() {
   const name    = document.getElementById('nameInput').value.trim();
   const phone   = document.getElementById('phoneInput').value.trim();
-  const address = document.getElementById('addressInput').value.trim();
   const note    = document.getElementById('noteInput').value.trim();
 
-  if (!name)              { shakeField('nameInput');    return; }
-  if (!phone)             { shakeField('phoneInput');   return; }
-  if (delivery && !address) { shakeField('addressInput'); return; }
+  if (!name)  { shakeField('nameInput');  return; }
+  if (!phone) { shakeField('phoneInput'); return; }
 
   const items = Object.entries(cart).map(([id, qty]) => {
     const p = products.find(x => x.id == id);
@@ -217,7 +215,6 @@ function placeOrder() {
     `👤 Ism: ${name}`,
     `📱 Tel: ${phone}`,
     `🚚 Usul: ${delivery ? 'Yetkazib berish' : "O'zi olib ketish"}`,
-    address ? `📍 Manzil: ${address}` : '',
     note    ? `💬 Izoh: ${note}` : '',
     ``,
     `🛒 Mahsulotlar:`,
@@ -237,7 +234,7 @@ function placeOrder() {
   updateBar();
   renderMenu(currentFilter);
 
-  ['nameInput','phoneInput','addressInput','noteInput'].forEach(id => {
+  ['nameInput','phoneInput','noteInput'].forEach(id => {
     document.getElementById(id).value = '';
   });
 
