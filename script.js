@@ -208,9 +208,9 @@ function openMap() {
     if (!map) {
       // Namangan markazi
       map = L.map('map').setView([41.0011, 71.6722], 14);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap',
-        maxZoom: 19,
+      L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+        attribution: '© Esri, HERE, Garmin, USGS',
+        maxZoom: 20,
       }).addTo(map);
 
       // Custom pin icon
@@ -261,18 +261,31 @@ function setPin(latlng, icon) {
 function updateMapAddress(latlng) {
   const lat = latlng.lat.toFixed(5);
   const lng = latlng.lng.toFixed(5);
-  document.getElementById('mapAddress').textContent = `📍 ${lat}, ${lng} — aniqlanmoqda...`;
+  document.getElementById('mapAddress').textContent = '⏳ Manzil aniqlanmoqda...';
 
-  // Reverse geocoding (OpenStreetMap Nominatim)
-  fetch(`https://nominatim.openstreetmap.org/reverse?lat=${latlng.lat}&lon=${latlng.lng}&format=json&accept-language=uz`)
+  fetch(`https://nominatim.openstreetmap.org/reverse?lat=${latlng.lat}&lon=${latlng.lng}&format=json&addressdetails=1&accept-language=uz,ru`)
     .then(r => r.json())
     .then(data => {
-      const addr = data.display_name || `${lat}, ${lng}`;
-      document.getElementById('mapAddress').textContent = addr;
-      selectedLatLng._address = addr;
+      const a = data.address || {};
+      const road    = a.road || a.pedestrian || a.footway || a.path || '';
+      const house   = a.house_number || '';
+      const quarter = a.quarter || a.neighbourhood || a.suburb || '';
+      const city    = a.city || a.town || a.village || a.county || '';
+
+      let parts = [];
+      if (road)    parts.push(road + (house ? ', ' + house : ''));
+      if (quarter) parts.push(quarter);
+      if (city)    parts.push(city);
+
+      const niceAddr = parts.length ? parts.join(', ') : (data.display_name || `${lat}, ${lng}`);
+      document.getElementById('mapAddress').textContent = niceAddr;
+      document.getElementById('mapAddress').style.color = '';
+      selectedLatLng._address = niceAddr;
+      selectedLatLng._fullAddress = data.display_name || niceAddr;
     })
     .catch(() => {
       document.getElementById('mapAddress').textContent = `${lat}, ${lng}`;
+      selectedLatLng._address = `${lat}, ${lng}`;
     });
 }
 
@@ -345,7 +358,8 @@ function placeOrder() {
   if (delivery && selectedLatLng) {
     const addr = selectedLatLng._address ||
       `${selectedLatLng.lat.toFixed(5)}, ${selectedLatLng.lng.toFixed(5)}`;
-    locationLine = `📍 Manzil: ${addr}\n🗺 Koordinat: ${selectedLatLng.lat.toFixed(6)},${selectedLatLng.lng.toFixed(6)}`;
+    const coords = `${selectedLatLng.lat.toFixed(6)},${selectedLatLng.lng.toFixed(6)}`;
+    locationLine = `📍 Manzil: ${addr}\n🗺 https://maps.google.com/maps?q=${coords}`;
   }
 
   const orderText = [
