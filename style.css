@@ -673,6 +673,7 @@ input.field-error, textarea.field-error { border-color: #e05555 !important; }
 .modal--map .modal-header {
   padding: 20px 24px 12px;
   flex-shrink: 0;
+  margin-bottom: 0;
 }
 .map-hint {
   padding: 0 24px 10px;
@@ -727,6 +728,42 @@ input.field-error, textarea.field-error { border-color: #e05555 !important; }
 /* Pin icon */
 .map-pin { display: flex; align-items: center; justify-content: center; }
 
+/* ─── Search row inside map modal ─── */
+.search-row {
+  display: flex;
+  gap: 8px;
+  padding: 0 24px 12px;
+  flex-shrink: 0;
+}
+.search-row input {
+  flex: 1;
+  background: var(--dark4);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-sm);
+  padding: 11px 14px;
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.82rem;
+  outline: none;
+  transition: border-color var(--transition), background var(--transition);
+}
+.search-row input:focus { border-color: var(--gold); background: var(--dark5); }
+.search-row input::placeholder { color: var(--text-faint); }
+.search-row button {
+  background: var(--gold);
+  border: none;
+  color: var(--dark);
+  padding: 0 18px;
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-family: 'DM Sans', sans-serif;
+  transition: background var(--transition);
+  flex-shrink: 0;
+}
+.search-row button:hover { background: var(--gold-light); }
+
 /* ─── Map open button in checkout ─── */
 .map-open-btn {
   width: 100%;
@@ -740,6 +777,7 @@ input.field-error, textarea.field-error { border-color: #e05555 !important; }
   font-weight: 500;
   cursor: pointer;
   transition: var(--transition);
+  font-family: 'DM Sans', sans-serif;
 }
 .map-open-btn:hover { background: var(--gold-dim); }
 
@@ -766,5 +804,6 @@ input.field-error, textarea.field-error { border-color: #e05555 !important; }
   padding: 4px 10px;
   cursor: pointer;
   transition: var(--transition);
+  font-family: 'DM Sans', sans-serif;
 }
 .map-change-btn:hover { border-color: var(--gold); background: var(--gold-dim); }
