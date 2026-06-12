@@ -194,8 +194,6 @@ function setDelivery(val, btn) {
   btn.classList.add('active');
 }
 
-
-
 // ── ORDER → BOT ──
 function placeOrder() {
   const name  = document.getElementById('nameInput').value.trim();
@@ -217,6 +215,8 @@ function placeOrder() {
     `📱 Tel: ${phone}`,
     `🚚 Usul: ${delivery ? 'Yetkazib berish' : "O'zi olib ketish"}`,
     note ? `💬 Izoh: ${note}` : '',
+    selectedLocation ? `📍 Manzil: ${selectedLocation.address}` : '',
+    selectedLocation ? `🔗 https://maps.google.com/?q=${selectedLocation.lat},${selectedLocation.lng}` : '',
     ``,
     `🛒 Mahsulotlar:`,
     items,
@@ -239,6 +239,11 @@ function placeOrder() {
     document.getElementById(id).value = '';
   });
 
+  // Reset selected location
+  selectedLocation = null;
+  document.getElementById('addrRow').style.display = 'none';
+  document.querySelector('#addrFieldWrap .map-open-btn').style.display = 'flex';
+
   closeCheckout();
   document.getElementById('successOverlay').classList.add('open');
   setTimeout(() => { if (tg) tg.close(); }, 3000);
@@ -250,7 +255,6 @@ function shakeField(inputId) {
   el.focus();
   setTimeout(() => el.classList.remove('field-error'), 2000);
 }
-
 
 function closeSuccess() {
   document.getElementById('successOverlay').classList.remove('open');
@@ -265,6 +269,116 @@ function scrollToTop() {
   document.getElementById(id).addEventListener('click', function(e) {
     if (e.target === this) this.classList.remove('open');
   });
+});
+
+// ════════════════════ MAP / GEOCODING ════════════════════
+let map, marker;
+let selectedLocation = null; // {lat, lng, address}
+const NAMANGAN = [40.9983, 71.6726];
+
+function initMap() {
+  if (map) return;
+  map = L.map('map', { zoomControl: true }).setView(NAMANGAN, 13);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap'
+  }).addTo(map);
+
+  marker = L.marker(NAMANGAN, { draggable: true }).addTo(map);
+  marker.on('dragend', () => {
+    const pos = marker.getLatLng();
+    reverseGeocode(pos.lat, pos.lng);
+  });
+  map.on('click', (e) => {
+    marker.setLatLng(e.latlng);
+    reverseGeocode(e.latlng.lat, e.latlng.lng);
+  });
+}
+
+function openMapModal() {
+  document.getElementById('mapOverlay').classList.add('open');
+  setTimeout(() => {
+    initMap();
+    map.invalidateSize();
+    if (selectedLocation) {
+      marker.setLatLng([selectedLocation.lat, selectedLocation.lng]);
+      map.setView([selectedLocation.lat, selectedLocation.lng], 15);
+      setSelectedText(selectedLocation.address);
+    } else {
+      reverseGeocode(NAMANGAN[0], NAMANGAN[1]);
+    }
+  }, 100);
+}
+
+function closeMapModal() {
+  document.getElementById('mapOverlay').classList.remove('open');
+}
+
+function setSelectedText(text) {
+  document.getElementById('mapSelectedText').querySelector('span').textContent = text;
+}
+
+async function reverseGeocode(lat, lng) {
+  setSelectedText('Manzil aniqlanmoqda...');
+  try {
+    const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`);
+    const data = await res.json();
+    const address = data.display_name || `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+    selectedLocation = { lat, lng, address };
+    setSelectedText(address);
+  } catch (e) {
+    selectedLocation = { lat, lng, address: `${lat.toFixed(6)}, ${lng.toFixed(6)}` };
+    setSelectedText(selectedLocation.address);
+  }
+}
+
+async function searchAddress() {
+  const q = document.getElementById('mapSearchInput').value.trim();
+  if (!q) return;
+  setSelectedText('Qidirilmoqda...');
+  try {
+    const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&limit=1&addressdetails=1`);
+    const data = await res.json();
+    if (!data.length) {
+      setSelectedText("Topilmadi, boshqa so'rov kiriting");
+      return;
+    }
+    const r = data[0];
+    const lat = parseFloat(r.lat), lng = parseFloat(r.lon);
+    marker.setLatLng([lat, lng]);
+    map.setView([lat, lng], 16);
+    selectedLocation = { lat, lng, address: r.display_name };
+    setSelectedText(r.display_name);
+  } catch (e) {
+    setSelectedText("Xatolik yuz berdi, qayta urinib ko'ring");
+  }
+}
+
+function locateMe() {
+  if (!navigator.geolocation) return;
+  const btn = document.querySelector('.map-locate-btn');
+  btn.disabled = true;
+  navigator.geolocation.getCurrentPosition((pos) => {
+    const { latitude, longitude } = pos.coords;
+    marker.setLatLng([latitude, longitude]);
+    map.setView([latitude, longitude], 16);
+    reverseGeocode(latitude, longitude);
+    btn.disabled = false;
+  }, () => { btn.disabled = false; });
+}
+
+function confirmLocation() {
+  if (!selectedLocation) return;
+  const row = document.getElementById('addrRow');
+  const text = document.getElementById('addrText');
+  text.textContent = selectedLocation.address;
+  row.style.display = 'flex';
+  document.querySelector('#addrFieldWrap .map-open-btn').style.display = 'none';
+  closeMapModal();
+}
+
+// backdrop click for map modal
+document.getElementById('mapOverlay').addEventListener('click', function(e) {
+  if (e.target === this) this.classList.remove('open');
 });
 
 // ── INIT ──
