@@ -9,9 +9,9 @@ const products = [
   { id:3,  name:"Kekslar to'plami",   desc:"Krem va mevalar bilan, 6 dona",     price:75000,  img:"https://images.unsplash.com/photo-1486427944299-d1955d23e34d?w=600&q=80", cat:"keks",      badge:null         },
   { id:4,  name:"Tiramisu",           desc:"Italyan klassikasi, porsiya",        price:45000,  img:"https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=600&q=80", cat:"keks",      badge:"YANGI"      },
   { id:5,  name:"Makaronlar",         desc:"Frantsuz makaronlari, 12 dona",     price:110000, img:"https://images.unsplash.com/photo-1558326567-98ae2405596b?w=600&q=80", cat:"keks",      badge:null         },
-  { id:6,  name:"Eklyer",            desc:"Shokolad krem bilan, 6 dona",        price:65000,  img:"https://images.unsplash.com/photo-1612203985729-70726954388c?w=600&q=80", cat:"keks",      badge:null         },
+  { id:6,  name:"Eklyer",             desc:"Shokolad krem bilan, 6 dona",       price:65000,  img:"https://images.unsplash.com/photo-1612203985729-70726954388c?w=600&q=80", cat:"keks",      badge:null         },
   { id:7,  name:"Artizan non",        desc:"Tabiiy xamirturushda, 2 dona",      price:35000,  img:"https://images.unsplash.com/photo-1509440159596-0249088772ff?w=600&q=80", cat:"non",       badge:null         },
-  { id:8,  name:"Briosh",            desc:"Sariyog'li frantsuz noni",            price:28000,  img:"https://images.unsplash.com/photo-1620921592173-4c7a24a19f0b?w=600&q=80", cat:"non",       badge:null         },
+  { id:8,  name:"Briosh",             desc:"Sariyog'li frantsuz noni",           price:28000,  img:"https://images.unsplash.com/photo-1620921592173-4c7a24a19f0b?w=600&q=80", cat:"non",       badge:null         },
   { id:9,  name:"Keytering set",      desc:"10 kishilik kanape platter",         price:450000, img:"https://images.unsplash.com/photo-1555244162-803834f70033?w=600&q=80", cat:"keytering", badge:"VIP"         },
 ];
 
@@ -200,8 +200,10 @@ function placeOrder() {
   const phone = document.getElementById('phoneInput').value.trim();
   const note  = document.getElementById('noteInput').value.trim();
 
-  if (!name)  { shakeField('nameInput');  return; }
-  if (!phone) { shakeField('phoneInput'); return; }
+  if (!name) { shakeField('nameInput'); return; }
+
+  // Aniq 9 ta raqam bo'lishi shart — na kam, na ko'p
+  if (!/^\d{9}$/.test(phone)) { shakeField('phoneInput'); return; }
 
   const items = Object.entries(cart).map(([id, qty]) => {
     const p = products.find(x => x.id == id);
@@ -215,8 +217,6 @@ function placeOrder() {
     `📱 Tel: ${phone}`,
     `🚚 Usul: ${delivery ? 'Yetkazib berish' : "O'zi olib ketish"}`,
     note ? `💬 Izoh: ${note}` : '',
-    selectedLocation ? `📍 Manzil: ${selectedLocation.address}` : '',
-    selectedLocation ? `🔗 https://maps.google.com/?q=${selectedLocation.lat},${selectedLocation.lng}` : '',
     ``,
     `🛒 Mahsulotlar:`,
     items,
@@ -234,15 +234,9 @@ function placeOrder() {
   cart = {};
   updateBar();
   renderMenu(currentFilter);
-
-  ['nameInput','phoneInput','noteInput'].forEach(id => {
+  ['nameInput', 'phoneInput', 'noteInput'].forEach(id => {
     document.getElementById(id).value = '';
   });
-
-  // Reset selected location
-  selectedLocation = null;
-  document.getElementById('addrRow').style.display = 'none';
-  document.querySelector('#addrFieldWrap .map-open-btn').style.display = 'flex';
 
   closeCheckout();
   document.getElementById('successOverlay').classList.add('open');
@@ -271,115 +265,10 @@ function scrollToTop() {
   });
 });
 
-// ════════════════════ MAP / GEOCODING ════════════════════
-let map, marker;
-let selectedLocation = null; // {lat, lng, address}
-const NAMANGAN = [40.9983, 71.6726];
-
-function initMap() {
-  if (map) return;
-  map = L.map('map', { zoomControl: true }).setView(NAMANGAN, 13);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '© OpenStreetMap'
-  }).addTo(map);
-
-  marker = L.marker(NAMANGAN, { draggable: true }).addTo(map);
-  marker.on('dragend', () => {
-    const pos = marker.getLatLng();
-    reverseGeocode(pos.lat, pos.lng);
-  });
-  map.on('click', (e) => {
-    marker.setLatLng(e.latlng);
-    reverseGeocode(e.latlng.lat, e.latlng.lng);
-  });
-}
-
-function openMapModal() {
-  document.getElementById('mapOverlay').classList.add('open');
-  setTimeout(() => {
-    initMap();
-    map.invalidateSize();
-    if (selectedLocation) {
-      marker.setLatLng([selectedLocation.lat, selectedLocation.lng]);
-      map.setView([selectedLocation.lat, selectedLocation.lng], 15);
-      setSelectedText(selectedLocation.address);
-    } else {
-      reverseGeocode(NAMANGAN[0], NAMANGAN[1]);
-    }
-  }, 100);
-}
-
-function closeMapModal() {
-  document.getElementById('mapOverlay').classList.remove('open');
-}
-
-function setSelectedText(text) {
-  document.getElementById('mapSelectedText').querySelector('span').textContent = text;
-}
-
-async function reverseGeocode(lat, lng) {
-  setSelectedText('Manzil aniqlanmoqda...');
-  try {
-    const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`);
-    const data = await res.json();
-    const address = data.display_name || `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
-    selectedLocation = { lat, lng, address };
-    setSelectedText(address);
-  } catch (e) {
-    selectedLocation = { lat, lng, address: `${lat.toFixed(6)}, ${lng.toFixed(6)}` };
-    setSelectedText(selectedLocation.address);
-  }
-}
-
-async function searchAddress() {
-  const q = document.getElementById('mapSearchInput').value.trim();
-  if (!q) return;
-  setSelectedText('Qidirilmoqda...');
-  try {
-    const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&limit=1&addressdetails=1`);
-    const data = await res.json();
-    if (!data.length) {
-      setSelectedText("Topilmadi, boshqa so'rov kiriting");
-      return;
-    }
-    const r = data[0];
-    const lat = parseFloat(r.lat), lng = parseFloat(r.lon);
-    marker.setLatLng([lat, lng]);
-    map.setView([lat, lng], 16);
-    selectedLocation = { lat, lng, address: r.display_name };
-    setSelectedText(r.display_name);
-  } catch (e) {
-    setSelectedText("Xatolik yuz berdi, qayta urinib ko'ring");
-  }
-}
-
-function locateMe() {
-  if (!navigator.geolocation) return;
-  const btn = document.querySelector('.map-locate-btn');
-  btn.disabled = true;
-  navigator.geolocation.getCurrentPosition((pos) => {
-    const { latitude, longitude } = pos.coords;
-    marker.setLatLng([latitude, longitude]);
-    map.setView([latitude, longitude], 16);
-    reverseGeocode(latitude, longitude);
-    btn.disabled = false;
-  }, () => { btn.disabled = false; });
-}
-
-function confirmLocation() {
-  if (!selectedLocation) return;
-  const row = document.getElementById('addrRow');
-  const text = document.getElementById('addrText');
-  text.textContent = selectedLocation.address;
-  row.style.display = 'flex';
-  document.querySelector('#addrFieldWrap .map-open-btn').style.display = 'none';
-  closeMapModal();
-}
-
-// backdrop click for map modal
-document.getElementById('mapOverlay').addEventListener('click', function(e) {
-  if (e.target === this) this.classList.remove('open');
-});
-
 // ── INIT ──
 renderMenu('all');
+
+// ── TELEFON: faqat raqam, max 9 ta (DOMContentLoaded kutmasdan) ──
+document.getElementById('phoneInput').addEventListener('input', function () {
+  this.value = this.value.replace(/\D/g, '').slice(0, 9);
+});
