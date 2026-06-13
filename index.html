@@ -6,8 +6,6 @@
   <title>Dilux Bakery & Catering — Namangan</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400;1,600&family=DM+Sans:wght@300;400;500;600&family=Italiana&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="https://unpkg.com/[email protected]/dist/leaflet.css"/>
-  <script src="https://unpkg.com/[email protected]/dist/leaflet.js"></script>
   <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
@@ -135,50 +133,16 @@
       <button class="checkout-tab" onclick="setDelivery(false,this)">🏪 O'zim olib ketaman</button>
     </div>
 
-    <div class="field" id="addrFieldWrap">
-      <button type="button" class="map-open-btn" onclick="openMapModal()">
-        📍 Manzilni xaritadan tanlash
-      </button>
-      <div class="map-addr-row" id="addrRow" style="display:none">
-        <span id="addrText"></span>
-        <button class="map-change-btn" onclick="openMapModal()">O'zgartirish</button>
-      </div>
-    </div>
-
     <div class="field"><input type="text" id="nameInput" placeholder="Ismingiz *"/></div>
-    <div class="field"><input type="tel" id="phoneInput" placeholder="Telefon raqam *"/></div>
+    <div class="field">
+      <input type="tel" id="phoneInput" placeholder="Telefon raqam (9 ta son) *" maxlength="9" inputmode="numeric"/>
+    </div>
     <div class="field"><textarea id="noteInput" placeholder="Izoh (ixtiyoriy)"></textarea></div>
     <div class="checkout-total">
       <span>Jami to'lov</span>
       <span id="checkoutTotal">0 so'm</span>
     </div>
     <button class="confirm-btn" onclick="placeOrder()">✅ Tasdiqlash</button>
-  </div>
-</div>
-
-<!-- MAP MODAL -->
-<div class="overlay" id="mapOverlay">
-  <div class="modal modal--map">
-    <div class="modal-header">
-      <div class="modal-title">Manzilni belgilang</div>
-      <button class="close-btn" onclick="closeMapModal()" aria-label="Yopish">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      </button>
-    </div>
-    <div class="map-hint">Xaritani siljitib, pinni kerakli joyga qo'ying yoki manzilni qidiring</div>
-    <div class="search-row">
-      <input type="text" id="mapSearchInput" placeholder="Manzilni qidiring..." onkeydown="if(event.key==='Enter'){event.preventDefault();searchAddress();}"/>
-      <button type="button" onclick="searchAddress()">Qidir</button>
-    </div>
-    <div id="map"></div>
-    <div class="map-selected" id="mapSelectedText">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
-      <span>Manzil aniqlanmoqda...</span>
-    </div>
-    <div class="map-actions">
-      <button type="button" class="map-locate-btn" onclick="locateMe()">📍 Joylashuvim</button>
-      <button type="button" class="confirm-btn map-confirm-btn" onclick="confirmLocation()">Tasdiqlash</button>
-    </div>
   </div>
 </div>
 
@@ -193,7 +157,6 @@
     </div>
   </div>
 </div>
-
 
 <script src="script.js"></script>
 </body>
